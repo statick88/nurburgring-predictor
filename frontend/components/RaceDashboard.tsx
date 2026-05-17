@@ -48,10 +48,10 @@ const mockEvents: RaceEvent[] = [
 ];
 
 const categoryLeaders: CategoryLeader[] = [
-  { category: 'GT3', team: 'Mercedes-AMG #3', position: 1, laps: 142, gap: 'Líder' },
-  { category: 'TCR', team: 'BMW M3 #81', position: 6, laps: 138, gap: '+4 vueltas' },
-  { category: 'GT4', team: 'BMW M4 #888', position: 32, laps: 128, gap: '+14 vueltas' },
-  { category: 'Cup2', team: 'Porsche 911 #900', position: 21, laps: 135, gap: '+7 vueltas' },
+  { category: 'GT3', team: 'Audi #16 Haase', position: 1, laps: 142, gap: 'Líder' },
+  { category: 'TCR', team: 'Hyundai #830 Basseng', position: 28, laps: 136, gap: '+6 vueltas' },
+  { category: 'GT4', team: 'BMW #888 Wolter', position: 32, laps: 128, gap: '+14 vueltas' },
+  { category: 'Cup2', team: 'Porsche #900 Meijer', position: 21, laps: 135, gap: '+7 vueltas' },
 ];
 
 export default function RaceDashboard() {
