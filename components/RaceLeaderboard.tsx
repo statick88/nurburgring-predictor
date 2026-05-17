@@ -16,7 +16,7 @@ export interface RaceEntrant {
   category: string;       // Categoría del auto
 }
 
-const mockRaceData: RaceEntrant[] = [
+export const mockRaceData: RaceEntrant[] = [
   { position: 1, number: 3, rank: 1, name: 'Verstappen', pitStops: 15, vehicle: 'Mercedes-AMG GT3', s1Time: '2:44.123', gapToCategoryBehind: '', category: 'GT3' },
   { position: 2, number: 80, rank: 2, name: 'Stolz', pitStops: 15, vehicle: 'Mercedes-AMG GT3', s1Time: '2:44.567', gapToCategoryBehind: '+0.444', category: 'GT3' },
   { position: 3, number: 34, rank: 3, name: 'Drudi', pitStops: 16, vehicle: 'Aston Martin Vantage AMR GT3 EVO', s1Time: '2:43.891', gapToCategoryBehind: '-0.676', category: 'GT3' },
