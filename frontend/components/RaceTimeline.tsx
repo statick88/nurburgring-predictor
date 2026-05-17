@@ -33,13 +33,13 @@ export default function RaceTimeline({
   const getEventIcon = (type: string) => {
     switch (type) {
       case 'pit_stop':
-        return <Wrench className="w-3 h-3" />;
+        return <Wrench className="w-2.5 h-2.5 sm:w-3 sm:h-3" />;
       case 'incident':
-        return <AlertTriangle className="w-3 h-3" />;
+        return <AlertTriangle className="w-2.5 h-2.5 sm:w-3 sm:h-3" />;
       case 'flag':
-        return <Flag className="w-3 h-3" />;
+        return <Flag className="w-2.5 h-2.5 sm:w-3 sm:h-3" />;
       default:
-        return <Milestone className="w-3 h-3" />;
+        return <Milestone className="w-2.5 h-2.5 sm:w-3 sm:h-3" />;
     }
   };
 
@@ -77,7 +77,7 @@ export default function RaceTimeline({
             {events.map((event) => (
               <div
                 key={event.id}
-                className={`absolute top-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 border-racing-light ${getEventColor(event.type)}`}
+                className={`absolute top-1/2 -translate-y-1/2 w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full border-2 border-racing-light/50 ${getEventColor(event.type)}`}
                 style={{ left: `${(event.time / 24) * 100}%` }}
                 title={`${event.title} @ ${event.time}h`}
               />
@@ -104,7 +104,7 @@ export default function RaceTimeline({
       <div className="space-y-3 border-l-2 border-racing-light/20 pl-4">
         {events.map((event) => (
           <div key={event.id} className="flex gap-3">
-            <div className={`w-3 h-3 rounded-full border-2 border-racing-light mt-1.5 -ml-5.5 ${getEventColor(event.type)}`}>
+            <div className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center border-2 border-racing-light/50 mt-0.5 -ml-5.5 ${getEventColor(event.type)}`}>
               {getEventIcon(event.type)}
             </div>
             <div>

@@ -68,10 +68,10 @@ export default function RaceDashboard() {
   
   const getEventIcon = (type: string) => {
     switch (type) {
-      case 'pit_stop': return <Wrench className="w-3.5 h-3.5" />;
-      case 'incident': return <AlertTriangle className="w-3.5 h-3.5" />;
-      case 'flag': return <Flag className="w-3.5 h-3.5" />;
-      default: return <Clock className="w-3.5 h-3.5" />;
+      case 'pit_stop': return <Wrench className="w-3 h-3 sm:w-3.5 sm:h-3.5" />;
+      case 'incident': return <AlertTriangle className="w-3 h-3 sm:w-3.5 sm:h-3.5" />;
+      case 'flag': return <Flag className="w-3 h-3 sm:w-3.5 sm:h-3.5" />;
+      default: return <Clock className="w-3 h-3 sm:w-3.5 sm:h-3.5" />;
     }
   };
 
@@ -218,10 +218,10 @@ export default function RaceDashboard() {
             <div className="space-y-3 sm:space-y-4 border-l-2 border-racing-light/20 pl-3 sm:pl-4">
               {mockEvents.map((event) => (
                 <div key={event.id} className="relative">
-                  <div className={`absolute -left-[21px] sm:-left-6 top-0 w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center border-2 border-racing-light ${getEventColor(event.type)}`}>
+                  <div className={`absolute -left-[19px] sm:-left-6 top-0.5 w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center border-2 border-racing-light/50 ${getEventColor(event.type)}`}>
                     {getEventIcon(event.type)}
                   </div>
-                  <div className="ml-1 sm:ml-2">
+                  <div className="ml-2 sm:ml-2">
                     <div className="flex items-center gap-2 mb-1 flex-wrap">
                       <p className="text-xs sm:text-sm font-semibold text-white">{event.title}</p>
                       <span className="text-[10px] sm:text-xs text-racing-muted bg-racing-dark px-1.5 py-0.5 rounded">
