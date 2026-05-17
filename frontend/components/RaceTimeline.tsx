@@ -1,6 +1,8 @@
 'use client';
 
 import { Flag, AlertTriangle, Wrench, Milestone } from 'lucide-react';
+import { useLanguage } from './LanguageContext';
+import { useRace } from './RaceContext';
 
 interface RaceEvent {
   id: string;
@@ -12,7 +14,6 @@ interface RaceEvent {
 
 interface RaceTimelineProps {
   raceStartTime?: Date;
-  currentHour?: number;
   events?: RaceEvent[];
 }
 
@@ -23,9 +24,10 @@ const mockEvents: RaceEvent[] = [
 ];
 
 export default function RaceTimeline({
-  currentHour = 8.5,
   events = mockEvents,
 }: RaceTimelineProps) {
+  const { t } = useLanguage();
+  const { currentHour } = useRace();
   const progress = (currentHour / 24) * 100;
 
   const getEventIcon = (type: string) => {

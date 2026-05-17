@@ -1,0 +1,190 @@
+# GitHub Actions Workflow: ML Model Training Pipeline
+# 
+# Trains the Nürburgring lap time prediction model
+# Can be triggered manually or on schedule
+
+name: Train ML Model
+
+on:
+  # Manual trigger
+  workflow_dispatch:
+    inputs:
+      model_version:
+        description: 'Model version tag'
+        required: false
+        type: string
+      training_data:
+        description: 'Training data source (latest, archive)'
+        required: false
+        type: string
+        default: 'latest'
+  
+  # Scheduled trigger - weekly training
+  schedule:
+    - cron: '0 0 * * 0'  # Every Sunday at midnight
+
+  # Trigger on changes to training data or model code
+  push:
+    paths:
+      - 'training/**'
+      - 'models/**'
+      - 'data/**'
+    branches:
+      - main
+
+permissions:
+  contents: read
+  actions: write
+  id-token: write
+
+jobs:
+  validate-data:
+    name: Validate Training Data
+    runs-on: ubuntu-latest
+    outputs:
+      data_hash: ${{ steps.hash.outputs.hash }}
+      record_count: ${{ steps.count.outputs.count }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          pip install pandas numpy scikit-learn pyyaml
+      
+      - name: Validate data schema
+        run: |
+          python training/validate_data.py --check-schema
+      
+      - name: Compute data hash
+        id: hash
+        run: |
+          echo "hash=$(sha256sum data/training/*.csv | head -1 | cut -d' ' -f1)" >> $GITHUB_OUTPUT
+      
+      - name: Count records
+        id: count
+        run: |
+          echo "count=$(wc -l < data/training/latest.csv)" >> $GITHUB_OUTPUT
+
+  train-model:
+    name: Train Prediction Model
+    needs: validate-data
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      
+      - name: Install dependencies
+        run: |
+          pip install pandas numpy scikit-learn xgboost joblib pyyaml mlflow
+      
+      - name: Load training data
+        run: |
+          python training/load_data.py --source ${{ github.event.inputs.training_data || 'latest' }}
+      
+      - name: Run model training
+        run: |
+          python training/train.py \
+            --version ${{ github.event.inputs.model_version || 'v2.1.0' }} \
+            --output models/
+      
+      - name: Evaluate model
+        run: |
+          python training/evaluate.py \
+            --model models/predictor.pkl \
+            --test-data data/test/latest.csv
+      
+      - name: Generate model report
+        run: |
+          python training/report.py \
+            --model models/predictor.pkl \
+            --output models/report.json
+      
+      - name: Upload model artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: model-artifacts
+          path: |
+            models/*.pkl
+            models/*.json
+          retention-days: 30
+
+  evaluate-model:
+    name: Evaluate Model Performance
+    needs: train-model
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: model-artifacts
+          path: models/
+      
+      - name: Run benchmark tests
+        run: |
+          python training/benchmark.py \
+            --model models/predictor.pkl \
+            --baseline models/baseline.pkl
+      
+      - name: Post results to Slack
+        if: always()
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          fields: repo,message,commit,author
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+  deploy-model:
+    name: Deploy Model
+    needs: [validate-data, train-model, evaluate-model]
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: model-artifacts
+          path: models/
+      
+      - name: Verify model integrity
+        run: |
+          python -c "import joblib; m = joblib.load('models/predictor.pkl'); print(f'Model loaded: {type(m).__name__}')"
+      
+      - name: Deploy to staging
+        run: |
+          # Deploy model to staging environment
+          # This would connect to your ML infrastructure
+          echo "Deploying to staging..."
+          # Integration with MLflow, KubeFlow, or custom deployment
+      
+      - name: Run smoke tests
+        run: |
+          python training/smoke_test.py --environment staging
+      
+      - name: Tag release
+        if: github.event.inputs.model_version
+        run: |
+          git tag -a "models/${{ github.event.inputs.model_version }}" -m "ML Model ${{ github.event.inputs.model_version }}"
+          git push origin "models/${{ github.event.inputs.model_version }}"

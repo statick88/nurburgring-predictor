@@ -1,5 +1,7 @@
 'use client';
 
+import { useLanguage } from './LanguageContext';
+
 interface CategorySelectorProps {
   categories: string[];
   value: string;
@@ -13,10 +15,13 @@ export default function CategorySelector({
   onChange,
   variant = 'tabs',
 }: CategorySelectorProps) {
+  const { t } = useLanguage();
+  const label = t('Categoría', 'Category');
+
   if (variant === 'dropdown') {
     return (
       <div className="bg-racing-darker rounded-lg p-4 border border-racing-light/10">
-        <label className="block text-sm font-semibold text-white mb-2">Category</label>
+        <label className="block text-sm font-semibold text-white mb-2">{label}</label>
         <select
           value={value}
           onChange={(e) => onChange(e.target.value)}
@@ -34,7 +39,7 @@ export default function CategorySelector({
 
   return (
     <div className="bg-racing-darker rounded-lg p-4 border border-racing-light/10">
-      <label className="block text-sm font-semibold text-racing-muted mb-3">Category</label>
+      <label className="block text-sm font-semibold text-racing-muted mb-3">{label}</label>
       <div className="flex flex-wrap gap-2">
         {categories.map((cat) => (
           <button

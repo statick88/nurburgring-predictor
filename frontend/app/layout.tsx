@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import Providers from '@/components/Providers';
 
 export const metadata: Metadata = {
   title: 'Nürburgring 24h Race Predictor',
@@ -22,7 +23,7 @@ export default function RootLayout({
         />
       </head>
       <body className="antialiased min-h-screen">
-        {children}
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

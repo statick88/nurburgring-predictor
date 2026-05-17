@@ -1,36 +1,23 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Clock, TrendingUp } from 'lucide-react';
+import { Clock, Hourglass, TrendingUp } from 'lucide-react';
+import { useLanguage } from './LanguageContext';
+import LanguageToggle from './LanguageToggle';
+import { useRace } from './RaceContext';
+
+function formatTime(totalSeconds: number): string {
+  const h = Math.floor(totalSeconds / 3600);
+  const m = Math.floor((totalSeconds % 3600) / 60);
+  const s = Math.floor(totalSeconds % 60);
+  return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+}
 
 export default function Header() {
-  const [raceTime, setRaceTime] = useState('00:00:00');
-  const [isLive] = useState(true);
+  const { elapsedSeconds, remainingSeconds, progress, isLive } = useRace();
+  const { language, setLanguage, t } = useLanguage();
 
-  // Simulated race time - replace with actual API
-  useEffect(() => {
-    const interval = setInterval(() => {
-      // Mock: increment time for demo
-      setRaceTime((prev) => {
-        const parts = prev.split(':');
-        const h = Number(parts[0] ?? 0);
-        const m = Number(parts[1] ?? 0);
-        const s = Number(parts[2] ?? 0);
-        const newS = s + 1;
-        if (newS >= 60) {
-          const newM = m + 1;
-          if (newM >= 60) {
-            const newH = h + 1;
-            return `${String(newH).padStart(2, '0')}:${String(newM % 60).padStart(2, '0')}:${String(newS % 60).padStart(2, '0')}`;
-          }
-          return `${String(h).padStart(2, '0')}:${String(newM).padStart(2, '0')}:${String(newS % 60).padStart(2, '0')}`;
-        }
-        return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(newS).padStart(2, '0')}`;
-      });
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, []);
+  const elapsedTime = formatTime(elapsedSeconds);
+  const remainingTime = formatTime(remainingSeconds);
 
   return (
     <header className="bg-racing-dark border-b border-racing-light/10 px-6 py-4">
@@ -41,8 +28,8 @@ export default function Header() {
             <TrendingUp className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-white">Nürburgring 24h</h1>
-            <p className="text-sm text-racing-muted">Live Predictor</p>
+            <h1 className="text-xl font-bold text-white">{t('Nürburgring 24h', 'Nürburgring 24h')}</h1>
+            <p className="text-sm text-racing-muted">{t('Predictor en Vivo', 'Live Predictor')}</p>
           </div>
         </div>
 
@@ -55,18 +42,47 @@ export default function Header() {
               <span className="relative inline-flex rounded-full h-3 w-3 bg-semantic-success"></span>
             </span>
             <span className="text-sm font-medium text-semantic-success">
-              {isLive ? 'LIVE' : 'OFFLINE'}
+              {isLive ? t('EN VIVO', 'LIVE') : t('OFFLINE', 'OFFLINE')}
             </span>
           </div>
 
-          {/* Race Timer */}
+          {/* Race Timer - Elapsed */}
           <div className="flex items-center gap-2 bg-racing-darker px-4 py-2 rounded-lg">
             <Clock className="w-5 h-5 text-racing-muted" />
-            <span className="text-2xl font-mono font-bold text-white">
-              {raceTime}
-            </span>
-            <span className="text-sm text-racing-muted">/ 24:00:00</span>
+            <div className="flex flex-col">
+              <span className="text-lg font-mono font-bold text-white">
+                {elapsedTime}
+              </span>
+              <span className="text-xs text-racing-muted">{t('Transcurrido', 'Elapsed')}</span>
+            </div>
           </div>
+
+          {/* Race Timer - Remaining */}
+          <div className="flex items-center gap-2 bg-racing-darker px-4 py-2 rounded-lg">
+            <Hourglass className="w-5 h-5 text-racing-red" />
+            <div className="flex flex-col">
+              <span className="text-lg font-mono font-bold text-racing-red">
+                {remainingTime}
+              </span>
+              <span className="text-xs text-racing-muted">{t('Restante', 'Remaining')}</span>
+            </div>
+          </div>
+
+          {/* Progress Bar */}
+          <div className="flex items-center gap-2">
+            <div className="w-24 h-2 bg-racing-darker rounded-full overflow-hidden">
+              <div 
+                className="h-full bg-gradient-to-r from-racing-red to-semantic-success rounded-full transition-all duration-500"
+                style={{ width: `${progress}%` }}
+              />
+            </div>
+            <span className="text-xs text-racing-muted w-12">
+              {progress.toFixed(1)}%
+            </span>
+          </div>
+
+          {/* Language Toggle */}
+          <LanguageToggle language={language} setLanguage={setLanguage} />
         </div>
       </div>
     </header>
