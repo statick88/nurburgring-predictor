@@ -61,7 +61,6 @@ export default function RaceDashboard() {
   const currentHourFormatted = Math.floor(currentHour);
   const currentMinuteFormatted = Math.floor((currentHour % 1) * 60);
   
-  // Format remaining time as HH:MM:SS
   const remainingHours = Math.floor(remainingSeconds / 3600);
   const remainingMinutes = Math.floor((remainingSeconds % 3600) / 60);
   const remainingSecs = Math.floor(remainingSeconds % 60);
@@ -69,10 +68,10 @@ export default function RaceDashboard() {
   
   const getEventIcon = (type: string) => {
     switch (type) {
-      case 'pit_stop': return <Wrench className="w-4 h-4" />;
-      case 'incident': return <AlertTriangle className="w-4 h-4" />;
-      case 'flag': return <Flag className="w-4 h-4" />;
-      default: return <Clock className="w-4 h-4" />;
+      case 'pit_stop': return <Wrench className="w-3.5 h-3.5" />;
+      case 'incident': return <AlertTriangle className="w-3.5 h-3.5" />;
+      case 'flag': return <Flag className="w-3.5 h-3.5" />;
+      default: return <Clock className="w-3.5 h-3.5" />;
     }
   };
 
@@ -96,159 +95,165 @@ export default function RaceDashboard() {
   };
 
   return (
-    <div className="bg-racing-dark rounded-lg border border-racing-light/10 p-6">
-      {/* Header Section */}
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h2 className="text-xl font-bold text-white">{t('Panel de Carrera', 'Race Dashboard')}</h2>
-          <p className="text-sm text-racing-muted">
-            {t('Hora actual', 'Current time')}: {String(currentHourFormatted).padStart(2, '0')}:{String(currentMinuteFormatted).padStart(2, '0')}h
-          </p>
-        </div>
-        <div className="flex items-center gap-4">
-          {/* Time to End */}
-          <div className="flex items-center gap-2 bg-racing-darker px-4 py-2 rounded-lg border border-racing-red/30">
-            <Clock className="w-4 h-4 text-racing-red" />
-            <div className="flex flex-col">
-              <span className="text-xs text-racing-muted uppercase">{t('Tiempo para finalizar', 'Time to end')}</span>
-              <span className="text-lg font-mono font-bold text-racing-red">{remainingTimeFormatted}</span>
+    <div className="bg-racing-dark rounded-lg border border-racing-light/10">
+      {/* Header - Mobile First */}
+      <div className="p-4 sm:p-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 sm:mb-6">
+          <div>
+            <h2 className="text-lg sm:text-xl font-bold text-white">{t('Panel de Carrera', 'Race Dashboard')}</h2>
+            <p className="text-xs sm:text-sm text-racing-muted">
+              {t('Hora actual', 'Current time')}: {String(currentHourFormatted).padStart(2, '0')}:{String(currentMinuteFormatted).padStart(2, '0')}h
+            </p>
+          </div>
+          
+          {/* Weather + Time to End - Stacked on mobile, row on desktop */}
+          <div className="flex flex-wrap items-center gap-2">
+            {/* Time to End */}
+            <div className="flex items-center gap-2 bg-racing-darker px-3 py-2 rounded-lg border border-racing-red/30 flex-1 sm:flex-none">
+              <Clock className="w-4 h-4 text-racing-red flex-shrink-0" />
+              <div className="min-w-0">
+                <span className="text-[10px] sm:text-xs text-racing-muted uppercase block truncate">{t('Tiempo para finalizar', 'Time to end')}</span>
+                <span className="text-base sm:text-lg font-mono font-bold text-racing-red">{remainingTimeFormatted}</span>
+              </div>
+            </div>
+            {/* Weather */}
+            <div className="flex items-center gap-1.5 bg-racing-darker px-2.5 py-2 rounded-lg">
+              <CloudRain className="w-4 h-4 text-blue-400" />
+              <span className="text-sm text-white">18°C</span>
+            </div>
+            {/* Track Temp */}
+            <div className="flex items-center gap-1.5 bg-racing-darker px-2.5 py-2 rounded-lg">
+              <Thermometer className="w-4 h-4 text-orange-400" />
+              <span className="text-sm text-white">24°C</span>
             </div>
           </div>
-          {/* Weather */}
-          <div className="flex items-center gap-2 bg-racing-darker px-3 py-2 rounded-lg">
-            <CloudRain className="w-4 h-4 text-blue-400" />
-            <span className="text-sm text-white">18°C</span>
-          </div>
-          {/* Track Temp */}
-          <div className="flex items-center gap-2 bg-racing-darker px-3 py-2 rounded-lg">
-            <Thermometer className="w-4 h-4 text-orange-400" />
-            <span className="text-sm text-white">24°C</span>
-          </div>
         </div>
-      </div>
 
-      {/* Race Progress Bar */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-semibold text-white">{t('Progreso de Carrera', 'Race Progress')}</span>
-          <span className="text-sm font-mono text-racing-red">{progress.toFixed(1)}%</span>
+        {/* Race Progress Bar */}
+        <div className="mb-6 sm:mb-8">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm font-semibold text-white">{t('Progreso de Carrera', 'Race Progress')}</span>
+            <span className="text-sm font-mono text-racing-red">{progress.toFixed(1)}%</span>
+          </div>
+          <div className="w-full h-3 bg-racing-darker rounded-full overflow-hidden">
+            <div 
+              className="h-full bg-gradient-to-r from-racing-red via-semantic-warning to-semantic-success rounded-full transition-all duration-500"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+          <div className="flex justify-between mt-1 text-[10px] sm:text-xs text-racing-muted">
+            <span>00:00</span>
+            <span className="hidden sm:inline">06:00</span>
+            <span>12:00</span>
+            <span className="hidden sm:inline">18:00</span>
+            <span>24:00</span>
+          </div>
         </div>
-        <div className="w-full h-3 bg-racing-darker rounded-full overflow-hidden">
-          <div 
-            className="h-full bg-gradient-to-r from-racing-red via-semantic-warning to-semantic-success rounded-full transition-all duration-500"
-            style={{ width: `${progress}%` }}
+
+        {/* Key Metrics Grid - 2 cols mobile, 4 cols desktop */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
+          <MetricCard
+            icon={<Gauge className="w-4 h-4 text-semantic-success" />}
+            label={t('Vueltas', 'Laps')}
+            value="142"
+            sub="de ~160 est."
+          />
+          <MetricCard
+            icon={<Clock className="w-4 h-4 text-racing-red" />}
+            label={t('Ritmo', 'Pace')}
+            value="8:24"
+            sub="min/vuelta"
+          />
+          <MetricCard
+            icon={<Wrench className="w-4 h-4 text-blue-400" />}
+            label={t('Paradas', 'Stops')}
+            value="15"
+            sub="prom/equipo"
+          />
+          <MetricCard
+            icon={<AlertTriangle className="w-4 h-4 text-semantic-warning" />}
+            label={t('Incidentes', 'Incidents')}
+            value="3"
+            sub="banderas"
           />
         </div>
-        <div className="flex justify-between mt-1 text-xs text-racing-muted">
-          <span>00:00</span>
-          <span>06:00</span>
-          <span>12:00</span>
-          <span>18:00</span>
-          <span>24:00</span>
-        </div>
-      </div>
 
-      {/* Key Metrics Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-        <div className="bg-racing-darker rounded-lg p-4 border border-racing-light/10">
-          <div className="flex items-center gap-2 mb-2">
-            <Gauge className="w-4 h-4 text-semantic-success" />
-            <span className="text-xs text-racing-muted uppercase">{t('Vueltas', 'Laps')}</span>
-          </div>
-          <p className="text-2xl font-bold text-white">142</p>
-          <p className="text-xs text-racing-muted">de ~160 estimadas</p>
-        </div>
-        
-        <div className="bg-racing-darker rounded-lg p-4 border border-racing-light/10">
-          <div className="flex items-center gap-2 mb-2">
-            <Clock className="w-4 h-4 text-racing-red" />
-            <span className="text-xs text-racing-muted uppercase">{t('Ritmo', 'Pace')}</span>
-          </div>
-          <p className="text-2xl font-bold text-white">8:24</p>
-          <p className="text-xs text-racing-muted">min/vuelta</p>
-        </div>
-
-        <div className="bg-racing-darker rounded-lg p-4 border border-racing-light/10">
-          <div className="flex items-center gap-2 mb-2">
-            <Wrench className="w-4 h-4 text-blue-400" />
-            <span className="text-xs text-racing-muted uppercase">{t('Paradas', 'Stops')}</span>
-          </div>
-          <p className="text-2xl font-bold text-white">15</p>
-          <p className="text-xs text-racing-muted">promedio por equipo</p>
-        </div>
-
-        <div className="bg-racing-darker rounded-lg p-4 border border-racing-light/10">
-          <div className="flex items-center gap-2 mb-2">
-            <AlertTriangle className="w-4 h-4 text-semantic-warning" />
-            <span className="text-xs text-racing-muted uppercase">{t('Incidentes', 'Incidents')}</span>
-          </div>
-          <p className="text-2xl font-bold text-white">3</p>
-          <p className="text-xs text-racing-muted">banderas amarillas</p>
-        </div>
-      </div>
-
-      {/* Two Column Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Category Leaders */}
-        <div>
-          <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-            <Trophy className="w-5 h-5 text-yellow-400" />
-            {t('Líderes por Categoría', 'Category Leaders')}
-          </h3>
-          <div className="space-y-3">
-            {categoryLeaders.map((leader) => (
-              <div key={leader.category} className="bg-racing-darker rounded-lg p-4 border border-racing-light/10">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <span className={`px-2 py-1 rounded text-xs font-bold ${getCategoryColor(leader.category)}`}>
-                      {leader.category}
-                    </span>
-                    <div>
-                      <p className="font-semibold text-white text-sm">{leader.team}</p>
-                      <p className="text-xs text-racing-muted">Pos. #{leader.position}</p>
+        {/* Two Column Layout - Stack on mobile */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Category Leaders */}
+          <div>
+            <h3 className="text-base sm:text-lg font-semibold text-white mb-3 sm:mb-4 flex items-center gap-2">
+              <Trophy className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400" />
+              {t('Líderes por Categoría', 'Category Leaders')}
+            </h3>
+            <div className="space-y-2 sm:space-y-3">
+              {categoryLeaders.map((leader) => (
+                <div key={leader.category} className="bg-racing-darker rounded-lg p-3 sm:p-4 border border-racing-light/10">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                      <span className={`px-2 py-1 rounded text-[10px] sm:text-xs font-bold flex-shrink-0 ${getCategoryColor(leader.category)}`}>
+                        {leader.category}
+                      </span>
+                      <div className="min-w-0">
+                        <p className="font-semibold text-white text-xs sm:text-sm truncate">{leader.team}</p>
+                        <p className="text-[10px] sm:text-xs text-racing-muted">Pos. #{leader.position}</p>
+                      </div>
+                    </div>
+                    <div className="text-right flex-shrink-0 ml-2">
+                      <p className="text-xs sm:text-sm font-mono text-white">{leader.laps} v.</p>
+                      <p className="text-[10px] sm:text-xs text-racing-muted">{leader.gap}</p>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <p className="text-sm font-mono text-white">{leader.laps} vueltas</p>
-                    <p className="text-xs text-racing-muted">{leader.gap}</p>
-                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
 
-        {/* Race Events Timeline */}
-        <div>
-          <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-            <Flag className="w-5 h-5 text-racing-red" />
-            {t('Eventos de Carrera', 'Race Events')}
-          </h3>
-          <div className="space-y-4 border-l-2 border-racing-light/20 pl-4">
-            {mockEvents.map((event) => (
-              <div key={event.id} className="relative">
-                <div className={`absolute -left-6 top-0 w-8 h-8 rounded-full flex items-center justify-center border-2 border-racing-light ${getEventColor(event.type)}`}>
-                  {getEventIcon(event.type)}
-                </div>
-                <div className="ml-2">
-                  <div className="flex items-center gap-2 mb-1">
-                    <p className="text-sm font-semibold text-white">{event.title}</p>
-                    <span className="text-xs text-racing-muted bg-racing-dark px-2 py-0.5 rounded">
-                      {Math.floor(event.time)}h {Math.floor((event.time % 1) * 60)}m
-                    </span>
+          {/* Race Events Timeline */}
+          <div>
+            <h3 className="text-base sm:text-lg font-semibold text-white mb-3 sm:mb-4 flex items-center gap-2">
+              <Flag className="w-4 h-4 sm:w-5 sm:h-5 text-racing-red" />
+              {t('Eventos de Carrera', 'Race Events')}
+            </h3>
+            <div className="space-y-3 sm:space-y-4 border-l-2 border-racing-light/20 pl-3 sm:pl-4">
+              {mockEvents.map((event) => (
+                <div key={event.id} className="relative">
+                  <div className={`absolute -left-[21px] sm:-left-6 top-0 w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center border-2 border-racing-light ${getEventColor(event.type)}`}>
+                    {getEventIcon(event.type)}
                   </div>
-                  {event.teamName && (
-                    <p className="text-xs text-racing-muted mb-1">{event.teamName}</p>
-                  )}
-                  {event.description && (
-                    <p className="text-xs text-racing-light/70">{event.description}</p>
-                  )}
+                  <div className="ml-1 sm:ml-2">
+                    <div className="flex items-center gap-2 mb-1 flex-wrap">
+                      <p className="text-xs sm:text-sm font-semibold text-white">{event.title}</p>
+                      <span className="text-[10px] sm:text-xs text-racing-muted bg-racing-dark px-1.5 py-0.5 rounded">
+                        {Math.floor(event.time)}h {Math.floor((event.time % 1) * 60)}m
+                      </span>
+                    </div>
+                    {event.teamName && (
+                      <p className="text-[10px] sm:text-xs text-racing-muted mb-1">{event.teamName}</p>
+                    )}
+                    {event.description && (
+                      <p className="text-[10px] sm:text-xs text-racing-light/70">{event.description}</p>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+function MetricCard({ icon, label, value, sub }: { icon: React.ReactNode; label: string; value: string; sub: string }) {
+  return (
+    <div className="bg-racing-darker rounded-lg p-3 sm:p-4 border border-racing-light/10">
+      <div className="flex items-center gap-2 mb-1.5 sm:mb-2">
+        {icon}
+        <span className="text-[10px] sm:text-xs text-racing-muted uppercase">{label}</span>
+      </div>
+      <p className="text-xl sm:text-2xl font-bold text-white">{value}</p>
+      <p className="text-[10px] sm:text-xs text-racing-muted">{sub}</p>
     </div>
   );
 }

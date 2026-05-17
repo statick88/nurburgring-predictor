@@ -75,81 +75,93 @@ export default function PredictionCard({
   const trend = getFinishTrend(currentPosition, predictedFinishPosition);
 
   return (
-    <div className="bg-racing-dark p-6 rounded-lg border border-racing-light/10 hover:border-racing-red/30 transition-colors">
+    <div className="bg-racing-dark rounded-lg border border-racing-light/10 hover:border-racing-red/30 transition-colors">
       {/* Header */}
-      <div className="flex justify-between items-start mb-4">
-        <div className="flex-1">
-          <div className="flex items-center gap-2 mb-1">
-            <h3 className="font-bold text-lg text-white">{teamName}</h3>
-            <span className={`text-xs font-mono px-2 py-0.5 rounded border ${getCategoryBadgeStyle(category)}`}>
-              {category}
-            </span>
+      <div className="p-4 sm:p-6 pb-3 sm:pb-4">
+        <div className="flex justify-between items-start gap-2">
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-1 flex-wrap">
+              <h3 className="font-bold text-base sm:text-lg text-white truncate">{teamName}</h3>
+              <span className={`text-[10px] sm:text-xs font-mono px-1.5 sm:px-2 py-0.5 rounded border flex-shrink-0 ${getCategoryBadgeStyle(category)}`}>
+                {category}
+              </span>
+            </div>
+            <p className="text-xs text-racing-muted truncate">
+              {t('Pilotos', 'Drivers')}: {driverNames.join(', ')}
+            </p>
           </div>
-          <p className="text-xs text-racing-muted">
-            {t('Pilotos', 'Drivers')}: {driverNames.join(', ')}
-          </p>
-        </div>
-        <span className="text-xs text-racing-muted bg-racing-darker px-2 py-1 rounded ml-2">
-          {timeAgo}
-        </span>
-      </div>
-
-      {/* Position Metrics */}
-      <div className="grid grid-cols-4 gap-3 mb-4">
-        {/* Current Position */}
-        <div className="bg-racing-darker p-3 rounded">
-          <p className="text-xs text-racing-muted uppercase mb-1">{t('Actual', 'Current')}</p>
-          <p className="text-2xl font-bold text-white">#{currentPosition}</p>
-        </div>
-
-        {/* Predicted Finish */}
-        <div className="bg-racing-darker p-3 rounded border border-racing-red/30">
-          <p className="text-xs text-racing-muted uppercase mb-1">{t('Predicho', 'Predicted')}</p>
-          <p className="text-2xl font-bold text-racing-red">#{predictedFinishPosition}</p>
-        </div>
-
-        {/* Confidence */}
-        <div className="bg-racing-darker p-3 rounded">
-          <p className="text-xs text-racing-muted uppercase mb-1">{t('Confianza', 'Confidence')}</p>
-          <p className={`text-2xl font-bold ${getConfidenceColor(finishProbability)}`}>
-            {finishProbability}%
-          </p>
-        </div>
-
-        {/* DNF */}
-        <div className="bg-racing-darker p-3 rounded">
-          <p className="text-xs text-racing-muted uppercase mb-1">DNF</p>
-          <p className={`text-2xl font-bold ${getDnfColor(dnfProbability)}`}>
-            {(dnfProbability * 100).toFixed(1)}%
-          </p>
+          <span className="text-[10px] sm:text-xs text-racing-muted bg-racing-darker px-2 py-1 rounded flex-shrink-0">
+            {timeAgo}
+          </span>
         </div>
       </div>
 
-      {/* Trend */}
-      <div className="mb-4 flex items-center gap-2">
-        <span className={`text-sm font-medium ${trend.color}`}>
-          {trend.icon} {trend.label} {Math.abs(predictedFinishPosition - currentPosition)} {t('posiciones', 'positions')}
-        </span>
-      </div>
-
-      {/* Probability Visualization */}
-      <div className="mb-4">
-        <div className="flex justify-between items-center mb-2">
-          <span className="text-xs text-racing-muted">{t('Prob. Top-5', 'Top-5 Probability')}</span>
-          <span className="text-sm font-mono text-racing-red">{topFiveOdds}%</span>
-        </div>
-        <div className="w-full bg-racing-darker rounded-full h-2 overflow-hidden">
-          <div
-            className="bg-gradient-to-r from-racing-red to-semantic-success h-full rounded-full transition-all duration-300"
-            style={{ width: `${Math.min(100, topFiveOdds)}%` }}
+      {/* Position Metrics - 2 cols mobile, 4 cols desktop */}
+      <div className="px-4 sm:px-6 pb-3 sm:pb-4">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+          <MetricBox
+            label={t('Actual', 'Current')}
+            value={`#${currentPosition}`}
+            color="text-white"
+          />
+          <MetricBox
+            label={t('Predicho', 'Predicted')}
+            value={`#${predictedFinishPosition}`}
+            color="text-racing-red"
+            borderColor="border-racing-red/30"
+          />
+          <MetricBox
+            label={t('Confianza', 'Confidence')}
+            value={`${finishProbability}%`}
+            color={getConfidenceColor(finishProbability)}
+          />
+          <MetricBox
+            label="DNF"
+            value={`${(dnfProbability * 100).toFixed(1)}%`}
+            color={getDnfColor(dnfProbability)}
           />
         </div>
       </div>
 
+      {/* Trend + Probability Bar */}
+      <div className="px-4 sm:px-6 pb-4 sm:pb-6 space-y-3">
+        {/* Trend */}
+        <div className="flex items-center gap-2">
+          <span className={`text-xs sm:text-sm font-medium ${trend.color}`}>
+            {trend.icon} {trend.label} {Math.abs(predictedFinishPosition - currentPosition)} {t('pos.', 'pos.')}
+          </span>
+        </div>
+
+        {/* Probability Bar */}
+        <div>
+          <div className="flex justify-between items-center mb-1.5">
+            <span className="text-xs text-racing-muted">{t('Prob. Top-5', 'Top-5 Prob.')}</span>
+            <span className="text-xs sm:text-sm font-mono text-racing-red">{topFiveOdds}%</span>
+          </div>
+          <div className="w-full bg-racing-darker rounded-full h-1.5 sm:h-2 overflow-hidden">
+            <div
+              className="bg-gradient-to-r from-racing-red to-semantic-success h-full rounded-full transition-all duration-300"
+              style={{ width: `${Math.min(100, topFiveOdds)}%` }}
+            />
+          </div>
+        </div>
+      </div>
+
       {/* Footer CTA */}
-      <button className="w-full bg-racing-red/10 hover:bg-racing-red/20 text-racing-red py-2 rounded text-sm font-medium transition-colors">
-        {t('Ver Análisis Detallado', 'View Detailed Analysis')}
-      </button>
+      <div className="px-4 sm:px-6 pb-4 sm:pb-6">
+        <button className="w-full bg-racing-red/10 hover:bg-racing-red/20 text-racing-red py-2 rounded text-xs sm:text-sm font-medium transition-colors">
+          {t('Ver Análisis', 'View Analysis')}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function MetricBox({ label, value, color, borderColor }: { label: string; value: string; color: string; borderColor?: string }) {
+  return (
+    <div className={`bg-racing-darker p-2 sm:p-3 rounded border ${borderColor || 'border-transparent'}`}>
+      <p className="text-[10px] sm:text-xs text-racing-muted uppercase mb-0.5 sm:mb-1">{label}</p>
+      <p className={`text-lg sm:text-2xl font-bold ${color} truncate`}>{value}</p>
     </div>
   );
 }
