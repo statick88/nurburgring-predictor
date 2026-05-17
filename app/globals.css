@@ -1,0 +1,42 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Design System Tokens - Nürburgring 24h Predictor */
+@layer base {
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    @apply bg-racing-darker text-racing-light;
+  }
+}
+
+@layer utilities {
+  /* Custom color utilities */
+  .bg-racing-dark { background-color: #1F2937; }
+  .bg-racing-darker { background-color: #111827; }
+  .bg-racing-red { background-color: #DC2626; }
+  .bg-racing-light { background-color: #D1D5DB; }
+  .bg-racing-muted { background-color: #9CA3AF; }
+
+  .text-racing-red { color: #DC2626; }
+  .text-racing-dark { color: #1F2937; }
+  .text-racing-darker { color: #111827; }
+  .text-racing-light { color: #D1D5DB; }
+  .text-racing-muted { color: #9CA3AF; }
+
+  .border-racing-light { border-color: #D1D5DB; }
+
+  /* Semantic colors */
+  .text-semantic-success { color: #10B981; }
+  .text-semantic-warning { color: #F59E0B; }
+  .text-semantic-danger { color: #EF4444; }
+
+  .bg-semantic-success { background-color: #10B981; }
+  .bg-semantic-warning { background-color: #F59E0B; }
+  .bg-semantic-danger { background-color: #EF4444; }
+
+  /* Border semantic */
+  .border-semantic-success { border-color: #10B981; }
+  .border-semantic-warning { border-color: #F59E0B; }
+  .border-semantic-danger { border-color: #EF4444; }
+}
