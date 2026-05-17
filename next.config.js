@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'export',
-  basePath: '/nurburgring-predictor',
+  distDir: 'docs',
   images: {
     unoptimized: true,
   },
