@@ -27,12 +27,12 @@ export default function Home() {
         <Sidebar />
 
         {/* Main Content */}
-        <main className="flex-1 p-6 space-y-6">
+        <main className="flex-1 p-3 sm:p-4 md:p-6 space-y-4 sm:space-y-6">
           {/* Race Dashboard (full width) */}
           <RaceDashboard />
 
           {/* Leaderboard + Stats Panel */}
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 sm:gap-6">
             <div className="lg:col-span-3">
               <RaceLeaderboard />
             </div>
