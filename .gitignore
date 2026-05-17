@@ -10,6 +10,10 @@ build/
 .env.local
 .env.*.local
 
+# Next.js
+frontend/.next/
+frontend/out/
+
 # Python
 __pycache__/
 *.py[cod]
